@@ -1,5 +1,5 @@
 interface OutputBuilderOptions {
-	maxSize?: number // Max size of the buffer (in bytes).
+	maxSize?: number // Max size of the buffer.
 	preserveStartPercent?: number // % of `maxSize` to preserve at start.
 	preserveEndPercent?: number // % of `maxSize` to preserve at end
 	truncationMessage?: string
@@ -43,8 +43,6 @@ export class OutputBuilder {
 		if (content.length === 0) {
 			return this
 		}
-
-		console.log(`[OutputBuilder#append] ${content.length} bytes`)
 
 		this._bytesProcessed += content.length
 
@@ -113,8 +111,6 @@ export class OutputBuilder {
 	}
 
 	public reset(content?: string) {
-		console.log(`[OutputBuilder#reset] ${this.bytesProcessed} bytes processed, ${this.bytesRemoved} bytes removed`)
-
 		this.startBuffer = ""
 		this.endBuffer = ""
 		this._bytesProcessed = 0

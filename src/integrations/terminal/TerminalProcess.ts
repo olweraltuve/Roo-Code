@@ -107,9 +107,9 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 				}
 
 				// Command output started, accumulate data without filtering.
-				// notice to future programmers: do not add escape sequence
-				// filtering here, and chunks may not be complete so you cannot rely
-				// on detecting or removing escape sequences mid-stream.
+				// Notice to future programmers: do not add escape sequence
+				// filtering here: output cannot change in length (see getUnretrievedOutput),
+				// and chunks may not be complete so you cannot rely on detecting or removing escape sequences mid-stream.
 				this.outputBuilder.append(data)
 
 				// For non-immediately returning commands we want to show loading spinner
@@ -173,8 +173,6 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 				)
 			}
 
-			// console.debug("[Terminal Process] raw output: " + inspect(output, { colors: false, breakLength: Infinity }))
-
 			// Output begins after C marker so we only need to trim off D marker
 			// (if D exists, see VSCode bug# 237208):
 			const match = this.matchBeforeVsceEndMarkers(this.outputBuilder.content)
@@ -183,17 +181,12 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 				this.outputBuilder.reset(match)
 			}
 
-			// console.debug(`[Terminal Process] processed output via ${matchSource}: ` + inspect(output, { colors: false, breakLength: Infinity }))
-
 			// for now we don't want this delaying requests since we don't send diagnostics automatically anymore (previous: "even though the command is finished, we still want to consider it 'hot' in case so that api request stalls to let diagnostics catch up")
 			if (this.hotTimer) {
 				clearTimeout(this.hotTimer)
 			}
 			this.isHot = false
 
-			console.log(
-				`[TerminalProcess#run] ${this.outputBuilder.bytesProcessed} bytes processed, ${this.outputBuilder.bytesRemoved} bytes removed`,
-			)
 			this.emit("completed", this.removeEscapeSequences(this.outputBuilder.content))
 			this.emit("continue")
 		} else {
@@ -231,7 +224,6 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 	getUnretrievedOutput(): string {
 		// Get raw unretrieved output
 		let outputToProcess = this.outputBuilder?.read() || ""
-		console.log(`[TerminalProcess#getUnretrievedOutput] ${outputToProcess.length} bytes`)
 
 		// Check for VSCE command end markers
 		const index633 = outputToProcess.indexOf("\x1b]633;D")
