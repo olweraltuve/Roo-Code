@@ -5,6 +5,7 @@ import { inspect } from "util"
 
 import { ExitCodeDetails } from "./TerminalManager"
 import { TerminalInfo, TerminalRegistry } from "./TerminalRegistry"
+import { OutputBuilder } from "./OutputBuilder"
 
 export interface TerminalProcessEvents {
 	line: [line: string]
@@ -30,8 +31,7 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 	private isListening: boolean = true
 	private terminalInfo: TerminalInfo | undefined
 	private lastEmitTime_ms: number = 0
-	private fullOutput: string = ""
-	private lastRetrievedIndex: number = 0
+	private outputBuilder?: OutputBuilder
 	isHot: boolean = false
 	private hotTimer: NodeJS.Timeout | null = null
 
@@ -89,6 +89,8 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 			 * - OSC 633 ; E ; <commandline> [; <nonce>] ST - Explicitly set command line with optional nonce
 			 */
 
+			this.outputBuilder = new OutputBuilder()
+
 			// Process stream data
 			for await (let data of stream) {
 				// Check for command output start marker
@@ -98,7 +100,7 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 					if (match !== undefined) {
 						commandOutputStarted = true
 						data = match
-						this.fullOutput = "" // Reset fullOutput when command actually starts
+						this.outputBuilder.reset() // Reset output when command actually starts
 					} else {
 						continue
 					}
@@ -106,9 +108,9 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 
 				// Command output started, accumulate data without filtering.
 				// notice to future programmers: do not add escape sequence
-				// filtering here: fullOutput cannot change in length (see getUnretrievedOutput),
-				// and chunks may not be complete so you cannot rely on detecting or removing escape sequences mid-stream.
-				this.fullOutput += data
+				// filtering here, and chunks may not be complete so you cannot rely
+				// on detecting or removing escape sequences mid-stream.
+				this.outputBuilder.append(data)
 
 				// For non-immediately returning commands we want to show loading spinner
 				// right away but this wouldnt happen until it emits a line break, so
@@ -173,11 +175,12 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 
 			// console.debug("[Terminal Process] raw output: " + inspect(output, { colors: false, breakLength: Infinity }))
 
-			// fullOutput begins after C marker so we only need to trim off D marker
+			// Output begins after C marker so we only need to trim off D marker
 			// (if D exists, see VSCode bug# 237208):
-			const match = this.matchBeforeVsceEndMarkers(this.fullOutput)
+			const match = this.matchBeforeVsceEndMarkers(this.outputBuilder.content)
+
 			if (match !== undefined) {
-				this.fullOutput = match
+				this.outputBuilder.reset(match)
 			}
 
 			// console.debug(`[Terminal Process] processed output via ${matchSource}: ` + inspect(output, { colors: false, breakLength: Infinity }))
@@ -188,7 +191,10 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 			}
 			this.isHot = false
 
-			this.emit("completed", this.removeEscapeSequences(this.fullOutput))
+			console.log(
+				`[TerminalProcess#run] ${this.outputBuilder.bytesProcessed} bytes processed, ${this.outputBuilder.bytesRemoved} bytes removed`,
+			)
+			this.emit("completed", this.removeEscapeSequences(this.outputBuilder.content))
 			this.emit("continue")
 		} else {
 			terminal.sendText(command, true)
@@ -224,7 +230,8 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 	// The final line may lack a carriage return if the program didn't send one.
 	getUnretrievedOutput(): string {
 		// Get raw unretrieved output
-		let outputToProcess = this.fullOutput.slice(this.lastRetrievedIndex)
+		let outputToProcess = this.outputBuilder?.read() || ""
+		console.log(`[TerminalProcess#getUnretrievedOutput] ${outputToProcess.length} bytes`)
 
 		// Check for VSCE command end markers
 		const index633 = outputToProcess.indexOf("\x1b]633;D")
@@ -260,7 +267,6 @@ export class TerminalProcess extends EventEmitter<TerminalProcessEvents> {
 		}
 
 		// Update index and slice output
-		this.lastRetrievedIndex += endIndex
 		outputToProcess = outputToProcess.slice(0, endIndex)
 
 		// Clean and return output
