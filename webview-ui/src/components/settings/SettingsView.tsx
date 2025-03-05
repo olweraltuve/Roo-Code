@@ -242,7 +242,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 
 	return (
 		<div className="fixed inset-0 flex flex-col overflow-hidden">
-			<div className="px-5 py-2.5 border-b border-vscode-panel-border">
+			<div className="px-5 py-2.5 border-b border-vscode-sideBar-border">
 				<div className="flex flex-col">
 					<div className="flex justify-between items-center">
 						<div className="flex items-center gap-2">
@@ -287,7 +287,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			</div>
 
 			<div
-				className="flex flex-col flex-1 overflow-auto divide-y divide-vscode-panel-border"
+				className="flex flex-col flex-1 overflow-auto divide-y divide-vscode-sideBar-border"
 				onScroll={handleScroll}>
 				<div ref={providersRef}>
 					<SectionHeader>
