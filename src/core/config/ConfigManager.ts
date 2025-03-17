@@ -51,7 +51,9 @@ export class ConfigManager {
 		try {
 			return await this.lock(async () => {
 				// Get the current global rate limit value
-				const globalRateLimit = (await this.context.globalState.get<number>("rateLimitSeconds")) || 0
+				const globalRateLimit = this.context.globalState
+					? (await this.context.globalState.get<number>("rateLimitSeconds")) || 0
+					: 0
 
 				// Get all configurations
 				const config = await this.readConfig()
@@ -65,7 +67,9 @@ export class ConfigManager {
 				await this.writeConfig(config)
 
 				// Remove the global rate limit setting
-				await this.context.globalState.update("rateLimitSeconds", undefined)
+				if (this.context.globalState) {
+					await this.context.globalState.update("rateLimitSeconds", undefined)
+				}
 
 				console.log(`[ConfigManager] Migrated global rate limit (${globalRateLimit}s) to all profiles`)
 			})
@@ -97,10 +101,12 @@ export class ConfigManager {
 				}
 
 				// Check if rate limit migration is needed
-				const hasGlobalRateLimit =
-					(await this.context.globalState.get<number>("rateLimitSeconds")) !== undefined
-				if (hasGlobalRateLimit) {
-					await this.migrateRateLimitToProfiles()
+				if (this.context.globalState) {
+					const hasGlobalRateLimit =
+						(await this.context.globalState.get<number>("rateLimitSeconds")) !== undefined
+					if (hasGlobalRateLimit) {
+						await this.migrateRateLimitToProfiles()
+					}
 				}
 			})
 		} catch (error) {
