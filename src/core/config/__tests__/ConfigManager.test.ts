@@ -544,13 +544,12 @@ describe("ConfigManager", () => {
 				apiConfigs: {},
 			}
 
+			// Mock the readConfig and writeConfig methods
 			mockSecrets.get.mockResolvedValue(JSON.stringify(emptyConfig))
+			mockSecrets.store.mockResolvedValue(undefined)
 
-			// Create a new instance with the mock context
-			const localConfigManager = new ConfigManager(mockContext)
-
-			// Call the migration method
-			await localConfigManager.migrateRateLimitToProfiles()
+			// Use the existing configManager instance
+			await configManager.migrateRateLimitToProfiles()
 
 			// Verify the global rate limit was removed even with empty config
 			expect(mockGlobalState.update).toHaveBeenCalledWith("rateLimitSeconds", undefined)
@@ -567,11 +566,8 @@ describe("ConfigManager", () => {
 			// Force an error during read
 			mockSecrets.get.mockRejectedValue(new Error("Storage failed"))
 
-			// Create a new instance with the mock context
-			const localConfigManager = new ConfigManager(mockContext)
-
 			// Expect the migration to throw an error
-			await expect(localConfigManager.migrateRateLimitToProfiles()).rejects.toThrow(
+			await expect(configManager.migrateRateLimitToProfiles()).rejects.toThrow(
 				"Failed to migrate rate limit settings: Error: Failed to read config from secrets: Error: Storage failed",
 			)
 		})
