@@ -325,6 +325,10 @@
 		"enableStreaming": "Akışı etkinleştir",
 		"useAzure": "Azure kullan",
 		"azureApiVersion": "Azure API sürümünü ayarla",
+		"rateLimit": {
+			"label": "Hız sınırı",
+			"description": "API istekleri arasındaki minimum süre."
+		},
 		"gemini": {
 			"freeRequests": "* Dakikada {{count}} isteğe kadar ücretsiz. Bundan sonra, ücretlendirme istem boyutuna bağlıdır.",
 			"pricingDetails": "Daha fazla bilgi için fiyatlandırma ayrıntılarına bakın."

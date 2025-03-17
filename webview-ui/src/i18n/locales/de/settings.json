@@ -325,6 +325,10 @@
 		"enableStreaming": "Streaming aktivieren",
 		"useAzure": "Azure verwenden",
 		"azureApiVersion": "Azure API-Version festlegen",
+		"rateLimit": {
+			"label": "Ratenbegrenzung",
+			"description": "Minimale Zeit zwischen API-Anfragen."
+		},
 		"gemini": {
 			"freeRequests": "* Kostenlos bis zu {{count}} Anfragen pro Minute. Danach hängt die Abrechnung von der Prompt-Größe ab.",
 			"pricingDetails": "Weitere Informationen finden Sie in den Preisdetails."

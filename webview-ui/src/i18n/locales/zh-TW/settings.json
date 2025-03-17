@@ -325,6 +325,10 @@
 		"enableStreaming": "啟用串流媒體",
 		"useAzure": "使用 Azure",
 		"azureApiVersion": "設定 Azure API 版本",
+		"rateLimit": {
+			"label": "速率限制",
+			"description": "API 請求之間的最小時間。"
+		},
 		"gemini": {
 			"freeRequests": "* 每分鐘免費 {{count}} 個請求。之後，計費取決於提示大小。",
 			"pricingDetails": "有關更多資訊，請參閱定價詳情。"

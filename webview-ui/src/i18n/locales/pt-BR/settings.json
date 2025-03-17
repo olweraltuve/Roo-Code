@@ -325,6 +325,10 @@
 		"enableStreaming": "Ativar streaming",
 		"useAzure": "Usar Azure",
 		"azureApiVersion": "Definir versão da API Azure",
+		"rateLimit": {
+			"label": "Limite de taxa",
+			"description": "Tempo mínimo entre requisições de API."
+		},
 		"gemini": {
 			"freeRequests": "* Gratuito até {{count}} requisições por minuto. Depois disso, a cobrança depende do tamanho do prompt.",
 			"pricingDetails": "Para mais informações, consulte os detalhes de preços."

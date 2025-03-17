@@ -325,6 +325,10 @@
 		"enableStreaming": "ストリーミングを有効化",
 		"useAzure": "Azureを使用",
 		"azureApiVersion": "Azure APIバージョンを設定",
+		"rateLimit": {
+			"label": "レート制限",
+			"description": "APIリクエスト間の最小時間。"
+		},
 		"gemini": {
 			"freeRequests": "* 1分間あたり{{count}}リクエストまで無料。それ以降は、プロンプトサイズに応じて課金されます。",
 			"pricingDetails": "詳細は価格情報をご覧ください。"

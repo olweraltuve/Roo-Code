@@ -325,6 +325,10 @@
 		"enableStreaming": "Bật streaming",
 		"useAzure": "Sử dụng Azure",
 		"azureApiVersion": "Đặt phiên bản API Azure",
+		"rateLimit": {
+			"label": "Giới hạn tốc độ",
+			"description": "Thời gian tối thiểu giữa các yêu cầu API."
+		},
 		"gemini": {
 			"freeRequests": "* Miễn phí đến {{count}} yêu cầu mỗi phút. Sau đó, thanh toán phụ thuộc vào kích thước lời nhắc.",
 			"pricingDetails": "Để biết thêm thông tin, xem chi tiết giá."

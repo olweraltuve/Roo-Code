@@ -325,6 +325,10 @@
 		"enableStreaming": "Włącz strumieniowanie",
 		"useAzure": "Użyj Azure",
 		"azureApiVersion": "Ustaw wersję API Azure",
+		"rateLimit": {
+			"label": "Limit szybkości",
+			"description": "Minimalny czas między żądaniami API."
+		},
 		"gemini": {
 			"freeRequests": "* Darmowe do {{count}} zapytań na minutę. Po tym, rozliczanie zależy od rozmiaru podpowiedzi.",
 			"pricingDetails": "Więcej informacji znajdziesz w szczegółach cennika."

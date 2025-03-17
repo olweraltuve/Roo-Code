@@ -325,6 +325,10 @@
 		"enableStreaming": "스트리밍 활성화",
 		"useAzure": "Azure 사용",
 		"azureApiVersion": "Azure API 버전 설정",
+		"rateLimit": {
+			"label": "속도 제한",
+			"description": "API 요청 간 최소 시간."
+		},
 		"gemini": {
 			"freeRequests": "* 분당 {{count}}개의 요청까지 무료. 이후에는 프롬프트 크기에 따라 요금이 부과됩니다.",
 			"pricingDetails": "자세한 내용은 가격 정보를 참조하세요."

@@ -325,6 +325,10 @@
 		"enableStreaming": "启用流式传输",
 		"useAzure": "使用 Azure 服务",
 		"azureApiVersion": "设置 Azure API 版本",
+		"rateLimit": {
+			"label": "速率限制",
+			"description": "API 请求之间的最小时间。"
+		},
 		"gemini": {
 			"freeRequests": "* 每分钟免费 {{count}} 个请求。之后，计费取决于提示大小。",
 			"pricingDetails": "有关更多信息，请参阅定价详情。"

@@ -1,4 +1,4 @@
-import { render, fireEvent } from "@testing-library/react"
+import { render, fireEvent, waitFor } from "@testing-library/react"
 import { RateLimitControl } from "../RateLimitControl"
 
 // Mock the translation hook
@@ -17,7 +17,7 @@ describe("RateLimitControl", () => {
 		expect(slider.value).toBe("10")
 	})
 
-	it("calls onChange when the slider value changes", () => {
+	it("calls onChange when the slider value changes", async () => {
 		const onChange = jest.fn()
 		const { getByRole } = render(<RateLimitControl value={10} onChange={onChange} />)
 
@@ -25,9 +25,9 @@ describe("RateLimitControl", () => {
 		fireEvent.change(slider, { target: { value: "20" } })
 
 		// The onChange is debounced, so we need to wait for it to be called
-		setTimeout(() => {
+		await waitFor(() => {
 			expect(onChange).toHaveBeenCalledWith(20)
-		}, 100)
+		})
 	})
 
 	it("updates the displayed value when the slider changes", () => {
