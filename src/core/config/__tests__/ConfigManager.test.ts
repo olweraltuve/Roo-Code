@@ -173,6 +173,7 @@ describe("ConfigManager", () => {
 					test: {
 						...newConfig,
 						id: testConfigId,
+						rateLimitSeconds: 0, // Default rate limit is 0 seconds
 					},
 				},
 				modeApiConfigs: {
