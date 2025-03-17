@@ -440,7 +440,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 
 				<div ref={advancedRef}>
 					<AdvancedSettings
-						rateLimitSeconds={rateLimitSeconds || 0}
 						diffEnabled={diffEnabled}
 						fuzzyMatchThreshold={fuzzyMatchThreshold}
 						setCachedStateField={setCachedStateField}

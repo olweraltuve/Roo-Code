@@ -42,6 +42,7 @@ import { vscode } from "../../utils/vscode"
 import { VSCodeButtonLink } from "../common/VSCodeButtonLink"
 import { ModelInfoView } from "./ModelInfoView"
 import { ModelPicker } from "./ModelPicker"
+import { RateLimitControl } from "./RateLimitControl"
 import { TemperatureControl } from "./TemperatureControl"
 import { validateApiConfiguration, validateModelId, validateBedrockArn } from "@/utils/validate"
 import { ApiErrorMessage } from "./ApiErrorMessage"
@@ -1505,11 +1506,20 @@ const ApiOptions = ({
 			)}
 
 			{!fromWelcomeView && (
-				<TemperatureControl
-					value={apiConfiguration?.modelTemperature}
-					onChange={handleInputChange("modelTemperature", noTransform)}
-					maxValue={2}
-				/>
+				<>
+					<TemperatureControl
+						value={apiConfiguration?.modelTemperature}
+						onChange={handleInputChange("modelTemperature", noTransform)}
+						maxValue={2}
+					/>
+					<RateLimitControl
+						value={apiConfiguration?.rateLimitSeconds}
+						onChange={handleInputChange("rateLimitSeconds", (value) => {
+							// Ensure we return a number or undefined, not null
+							return value === null ? undefined : value
+						})}
+					/>
+				</>
 			)}
 		</div>
 	)

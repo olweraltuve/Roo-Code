@@ -1366,14 +1366,9 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 						await this.postStateToWebview()
 						break
 					case "rateLimitSeconds":
-						// Update the current API configuration with the rate limit value
-						const currentApiConfigName = (await this.getGlobalState("currentApiConfigName")) as string
-						if (currentApiConfigName) {
-							const apiConfig = await this.configManager.loadConfig(currentApiConfigName)
-							apiConfig.rateLimitSeconds = message.value ?? 0
-							await this.configManager.saveConfig(currentApiConfigName, apiConfig)
-							await this.updateApiConfiguration(apiConfig)
-						}
+						// Rate limit seconds is now part of the API configuration
+						// and will be saved when the API configuration is saved
+						await this.updateGlobalState("rateLimitSeconds", message.value ?? 0)
 						await this.postStateToWebview()
 						break
 					case "writeDelayMs":

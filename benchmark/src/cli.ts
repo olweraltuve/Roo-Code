@@ -29,8 +29,8 @@ async function runLanguage({ runId, model, language }: { runId: number; model: s
 
 	const exercises = filesystem
 		.subdirectories(languagePath)
-		.map((exercise) => path.basename(exercise))
-		.filter((exercise) => !exercise.startsWith("."))
+		.map((exercise: string) => path.basename(exercise))
+		.filter((exercise: string) => !exercise.startsWith("."))
 
 	for (const exercise of exercises) {
 		await runExercise({ runId, model, language, exercise })
@@ -84,7 +84,9 @@ async function askLanguage(prompt: GluegunPrompt) {
 		type: "select",
 		name: "language",
 		message: "Which language?",
-		choices: languages.map((language) => path.basename(language)).filter((language) => !language.startsWith(".")),
+		choices: languages
+			.map((language: string) => path.basename(language))
+			.filter((language: string) => !language.startsWith(".")),
 	})
 
 	return language
@@ -101,7 +103,7 @@ async function askExercise(prompt: GluegunPrompt, language: string) {
 		type: "select",
 		name: "exercise",
 		message: "Which exercise?",
-		choices: exercises.map((exercise) => path.basename(exercise)),
+		choices: exercises.map((exercise: string) => path.basename(exercise)),
 	})
 
 	return exercise
@@ -131,7 +133,7 @@ async function main() {
 		.version()
 		.command({
 			name: "run",
-			run: ({ config, parameters }) => {
+			run: ({ config, parameters }: { config: any; parameters: any }) => {
 				config.language = parameters.first
 				config.exercise = parameters.second
 
