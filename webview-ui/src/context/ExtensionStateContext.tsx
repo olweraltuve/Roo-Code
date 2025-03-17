@@ -129,7 +129,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		enableMcpServerCreation: true,
 		alwaysApproveResubmit: false,
 		requestDelaySeconds: 5,
-		// rateLimitSeconds is now part of apiConfiguration
+		rateLimitSeconds: 0, // Minimum time between successive requests (0 = disabled)
 		currentApiConfigName: "default",
 		listApiConfigMeta: [],
 		mode: defaultModeSlug,

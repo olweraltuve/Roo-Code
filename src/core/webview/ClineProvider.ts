@@ -1365,6 +1365,12 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 						await this.updateGlobalState("requestDelaySeconds", message.value ?? 5)
 						await this.postStateToWebview()
 						break
+					case "rateLimitSeconds":
+						// Rate limit seconds is now part of the API configuration
+						// and will be saved when the API configuration is saved
+						await this.updateGlobalState("rateLimitSeconds", message.value ?? 0)
+						await this.postStateToWebview()
+						break
 					case "writeDelayMs":
 						await this.updateGlobalState("writeDelayMs", message.value)
 						await this.postStateToWebview()
