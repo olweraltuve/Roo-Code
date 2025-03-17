@@ -2327,7 +2327,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			enableMcpServerCreation,
 			alwaysApproveResubmit,
 			requestDelaySeconds,
-			// rateLimitSeconds is now part of apiConfiguration
 			currentApiConfigName,
 			listApiConfigMeta,
 			mode,
