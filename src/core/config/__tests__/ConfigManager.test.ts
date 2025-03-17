@@ -489,4 +489,83 @@ describe("ConfigManager", () => {
 			)
 		})
 	})
+
+	describe("migrateRateLimitToProfiles", () => {
+		it("should migrate global rate limit to all profiles", async () => {
+			// Setup mock context with global rate limit
+			const mockGlobalState = {
+				get: jest.fn().mockResolvedValue(15), // Mock global rate limit of 15 seconds
+				update: jest.fn(),
+			}
+			;(mockContext as any).globalState = mockGlobalState
+
+			// Setup existing configs without rate limits
+			const existingConfig: ApiConfigData = {
+				currentApiConfigName: "default",
+				apiConfigs: {
+					default: {
+						id: "default",
+						apiProvider: "anthropic",
+					},
+					test: {
+						id: "test-id",
+						apiProvider: "openrouter",
+					},
+				},
+			}
+
+			mockSecrets.get.mockResolvedValue(JSON.stringify(existingConfig))
+
+			// Call the migration method
+			await configManager.migrateRateLimitToProfiles()
+
+			// Verify the configs were updated with the rate limit
+			const storedConfig = JSON.parse(mockSecrets.store.mock.calls[0][1])
+			expect(storedConfig.apiConfigs.default.rateLimitSeconds).toBe(15)
+			expect(storedConfig.apiConfigs.test.rateLimitSeconds).toBe(15)
+
+			// Verify the global rate limit was removed
+			expect(mockGlobalState.update).toHaveBeenCalledWith("rateLimitSeconds", undefined)
+		})
+
+		it("should handle empty config case", async () => {
+			// Setup mock context with global rate limit
+			const mockGlobalState = {
+				get: jest.fn().mockResolvedValue(10), // Mock global rate limit of 10 seconds
+				update: jest.fn(),
+			}
+			;(mockContext as any).globalState = mockGlobalState
+
+			// Setup empty config
+			const emptyConfig: ApiConfigData = {
+				currentApiConfigName: "default",
+				apiConfigs: {},
+			}
+
+			mockSecrets.get.mockResolvedValue(JSON.stringify(emptyConfig))
+
+			// Call the migration method
+			await configManager.migrateRateLimitToProfiles()
+
+			// Verify the global rate limit was removed even with empty config
+			expect(mockGlobalState.update).toHaveBeenCalledWith("rateLimitSeconds", undefined)
+		})
+
+		it("should handle errors gracefully", async () => {
+			// Setup mock context with global rate limit
+			const mockGlobalState = {
+				get: jest.fn().mockResolvedValue(5), // Mock global rate limit of 5 seconds
+				update: jest.fn(),
+			}
+			;(mockContext as any).globalState = mockGlobalState
+
+			// Force an error during read
+			mockSecrets.get.mockRejectedValue(new Error("Storage failed"))
+
+			// Expect the migration to throw an error
+			await expect(configManager.migrateRateLimitToProfiles()).rejects.toThrow(
+				"Failed to migrate rate limit settings: Error: Failed to read config from secrets: Error: Storage failed",
+			)
+		})
+	})
 })

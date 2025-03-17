@@ -13,7 +13,7 @@ import { SectionHeader } from "./SectionHeader"
 import { Section } from "./Section"
 
 type AdvancedSettingsProps = HTMLAttributes<HTMLDivElement> & {
-	rateLimitSeconds: number
+	rateLimitSeconds?: number
 	diffEnabled?: boolean
 	fuzzyMatchThreshold?: number
 	setCachedStateField: SetCachedStateField<"rateLimitSeconds" | "diffEnabled" | "fuzzyMatchThreshold">
@@ -50,11 +50,11 @@ export const AdvancedSettings = ({
 								min="0"
 								max="60"
 								step="1"
-								value={rateLimitSeconds}
+								value={rateLimitSeconds || 0}
 								onChange={(e) => setCachedStateField("rateLimitSeconds", parseInt(e.target.value))}
 								className="h-2 focus:outline-0 w-4/5 accent-vscode-button-background"
 							/>
-							<span style={{ ...sliderLabelStyle }}>{rateLimitSeconds}s</span>
+							<span style={{ ...sliderLabelStyle }}>{rateLimitSeconds || 0}s</span>
 						</div>
 					</div>
 					<p className="text-vscode-descriptionForeground text-sm mt-0">

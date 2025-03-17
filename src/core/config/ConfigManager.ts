@@ -17,6 +17,7 @@ export class ConfigManager {
 		apiConfigs: {
 			default: {
 				id: this.generateId(),
+				rateLimitSeconds: 0, // Default rate limit is 0 seconds
 			},
 		},
 	}
@@ -43,6 +44,36 @@ export class ConfigManager {
 	/**
 	 * Initialize config if it doesn't exist
 	 */
+	/**
+	 * Migrate rate limit from global state to profile-specific setting
+	 */
+	async migrateRateLimitToProfiles(): Promise<void> {
+		try {
+			return await this.lock(async () => {
+				// Get the current global rate limit value
+				const globalRateLimit = (await this.context.globalState.get<number>("rateLimitSeconds")) || 0
+
+				// Get all configurations
+				const config = await this.readConfig()
+
+				// Update each configuration with the global rate limit
+				for (const apiConfig of Object.values(config.apiConfigs)) {
+					apiConfig.rateLimitSeconds = globalRateLimit
+				}
+
+				// Save the updated configurations
+				await this.writeConfig(config)
+
+				// Remove the global rate limit setting
+				await this.context.globalState.update("rateLimitSeconds", undefined)
+
+				console.log(`[ConfigManager] Migrated global rate limit (${globalRateLimit}s) to all profiles`)
+			})
+		} catch (error) {
+			throw new Error(`Failed to migrate rate limit settings: ${error}`)
+		}
+	}
+
 	async initConfig(): Promise<void> {
 		try {
 			return await this.lock(async () => {
@@ -52,17 +83,24 @@ export class ConfigManager {
 					return
 				}
 
-				// Migrate: ensure all configs have IDs
-				let needsMigration = false
+				// Check if migration is needed for IDs
+				let needsIdMigration = false
 				for (const [name, apiConfig] of Object.entries(config.apiConfigs)) {
 					if (!apiConfig.id) {
 						apiConfig.id = this.generateId()
-						needsMigration = true
+						needsIdMigration = true
 					}
 				}
 
-				if (needsMigration) {
+				if (needsIdMigration) {
 					await this.writeConfig(config)
+				}
+
+				// Check if rate limit migration is needed
+				const hasGlobalRateLimit =
+					(await this.context.globalState.get<number>("rateLimitSeconds")) !== undefined
+				if (hasGlobalRateLimit) {
+					await this.migrateRateLimitToProfiles()
 				}
 			})
 		} catch (error) {
@@ -99,6 +137,11 @@ export class ConfigManager {
 				currentConfig.apiConfigs[name] = {
 					...config,
 					id: existingConfig?.id || this.generateId(),
+					// Preserve rateLimitSeconds if not explicitly set in the new config
+					rateLimitSeconds:
+						config.rateLimitSeconds !== undefined
+							? config.rateLimitSeconds
+							: existingConfig?.rateLimitSeconds || 0,
 				}
 				await this.writeConfig(currentConfig)
 			})

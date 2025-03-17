@@ -80,6 +80,7 @@ export interface ApiHandlerOptions {
 export type ApiConfiguration = ApiHandlerOptions & {
 	apiProvider?: ApiProvider
 	id?: string // stable unique identifier
+	rateLimitSeconds?: number // Rate limit in seconds between API requests
 }
 
 // Import GlobalStateKey type from globalState.ts
@@ -130,6 +131,7 @@ export const API_CONFIG_KEYS: GlobalStateKey[] = [
 	"modelTemperature",
 	"modelMaxTokens",
 	"modelMaxThinkingTokens",
+	"rateLimitSeconds", // Added for profile-specific rate limiting
 ]
 
 // Models

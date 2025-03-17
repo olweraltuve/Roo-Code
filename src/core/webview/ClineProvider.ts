@@ -1331,7 +1331,14 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						await this.postStateToWebview()
 						break
 					case "rateLimitSeconds":
-						await this.updateGlobalState("rateLimitSeconds", message.value ?? 0)
+						// Update the current API configuration with the rate limit value
+						const currentApiConfigName = (await this.getGlobalState("currentApiConfigName")) as string
+						if (currentApiConfigName) {
+							const apiConfig = await this.configManager.loadConfig(currentApiConfigName)
+							apiConfig.rateLimitSeconds = message.value ?? 0
+							await this.configManager.saveConfig(currentApiConfigName, apiConfig)
+							await this.updateApiConfiguration(apiConfig)
+						}
 						await this.postStateToWebview()
 						break
 					case "writeDelayMs":
@@ -2296,7 +2303,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			enableMcpServerCreation,
 			alwaysApproveResubmit,
 			requestDelaySeconds,
-			rateLimitSeconds,
+			// rateLimitSeconds is now part of apiConfiguration
 			currentApiConfigName,
 			listApiConfigMeta,
 			mode,
@@ -2357,7 +2364,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			enableMcpServerCreation: enableMcpServerCreation ?? true,
 			alwaysApproveResubmit: alwaysApproveResubmit ?? false,
 			requestDelaySeconds: requestDelaySeconds ?? 10,
-			rateLimitSeconds: rateLimitSeconds ?? 0,
+			rateLimitSeconds: apiConfiguration.rateLimitSeconds ?? 0,
 			currentApiConfigName: currentApiConfigName ?? "default",
 			listApiConfigMeta: listApiConfigMeta ?? [],
 			mode: mode ?? defaultModeSlug,
@@ -2515,7 +2522,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			enableMcpServerCreation: stateValues.enableMcpServerCreation ?? true,
 			alwaysApproveResubmit: stateValues.alwaysApproveResubmit ?? false,
 			requestDelaySeconds: Math.max(5, stateValues.requestDelaySeconds ?? 10),
-			rateLimitSeconds: stateValues.rateLimitSeconds ?? 0,
+			// rateLimitSeconds is now part of the API configuration
 			currentApiConfigName: stateValues.currentApiConfigName ?? "default",
 			listApiConfigMeta: stateValues.listApiConfigMeta ?? [],
 			modeApiConfigs: stateValues.modeApiConfigs ?? ({} as Record<Mode, string>),
