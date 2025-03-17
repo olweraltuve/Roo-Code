@@ -216,6 +216,7 @@ describe("ConfigManager", () => {
 						apiProvider: "anthropic",
 						apiKey: "new-key",
 						id: "test-id",
+						rateLimitSeconds: 0, // Default rate limit is 0 seconds
 					},
 				},
 			}
@@ -544,8 +545,11 @@ describe("ConfigManager", () => {
 
 			mockSecrets.get.mockResolvedValue(JSON.stringify(emptyConfig))
 
+			// Create a new instance with the mock context
+			const localConfigManager = new ConfigManager(mockContext)
+
 			// Call the migration method
-			await configManager.migrateRateLimitToProfiles()
+			await localConfigManager.migrateRateLimitToProfiles()
 
 			// Verify the global rate limit was removed even with empty config
 			expect(mockGlobalState.update).toHaveBeenCalledWith("rateLimitSeconds", undefined)
@@ -562,8 +566,11 @@ describe("ConfigManager", () => {
 			// Force an error during read
 			mockSecrets.get.mockRejectedValue(new Error("Storage failed"))
 
+			// Create a new instance with the mock context
+			const localConfigManager = new ConfigManager(mockContext)
+
 			// Expect the migration to throw an error
-			await expect(configManager.migrateRateLimitToProfiles()).rejects.toThrow(
+			await expect(localConfigManager.migrateRateLimitToProfiles()).rejects.toThrow(
 				"Failed to migrate rate limit settings: Error: Failed to read config from secrets: Error: Storage failed",
 			)
 		})
