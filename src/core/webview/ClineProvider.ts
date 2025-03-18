@@ -2333,7 +2333,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			enableMcpServerCreation,
 			alwaysApproveResubmit,
 			requestDelaySeconds,
-			// rateLimitSeconds is now part of apiConfiguration
 			currentApiConfigName,
 			listApiConfigMeta,
 			mode,
@@ -2552,7 +2551,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			enableMcpServerCreation: stateValues.enableMcpServerCreation ?? true,
 			alwaysApproveResubmit: stateValues.alwaysApproveResubmit ?? false,
 			requestDelaySeconds: Math.max(5, stateValues.requestDelaySeconds ?? 10),
-			// rateLimitSeconds is now part of the API configuration
 			currentApiConfigName: stateValues.currentApiConfigName ?? "default",
 			listApiConfigMeta: stateValues.listApiConfigMeta ?? [],
 			modeApiConfigs: stateValues.modeApiConfigs ?? ({} as Record<Mode, string>),
