@@ -26,6 +26,7 @@ export interface ApiHandlerOptions {
 	glamaModelId?: string
 	glamaModelInfo?: ModelInfo
 	glamaApiKey?: string
+	rateLimitSeconds?: number // Added for per-profile rate limiting
 	openRouterApiKey?: string
 	openRouterModelId?: string
 	openRouterModelInfo?: ModelInfo
@@ -134,6 +135,7 @@ export const API_CONFIG_KEYS: GlobalStateKey[] = [
 	"modelTemperature",
 	"modelMaxTokens",
 	"modelMaxThinkingTokens",
+	"rateLimitSeconds", // Added for per-profile rate limiting
 ]
 
 // Models

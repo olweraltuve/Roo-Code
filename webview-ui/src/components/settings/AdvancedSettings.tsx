@@ -13,18 +13,14 @@ import { SectionHeader } from "./SectionHeader"
 import { Section } from "./Section"
 
 type AdvancedSettingsProps = HTMLAttributes<HTMLDivElement> & {
-	rateLimitSeconds: number
 	terminalShellIntegrationTimeout: number | undefined
 	diffEnabled?: boolean
 	fuzzyMatchThreshold?: number
-	setCachedStateField: SetCachedStateField<
-		"rateLimitSeconds" | "diffEnabled" | "fuzzyMatchThreshold" | "terminalShellIntegrationTimeout"
-	>
+	setCachedStateField: SetCachedStateField<"diffEnabled" | "fuzzyMatchThreshold" | "terminalShellIntegrationTimeout">
 	experiments: Record<ExperimentId, boolean>
 	setExperimentEnabled: SetExperimentEnabled
 }
 export const AdvancedSettings = ({
-	rateLimitSeconds,
 	terminalShellIntegrationTimeout,
 	diffEnabled,
 	fuzzyMatchThreshold,
@@ -45,27 +41,6 @@ export const AdvancedSettings = ({
 			</SectionHeader>
 
 			<Section>
-				<div>
-					<div className="flex flex-col gap-2">
-						<span className="font-medium">{t("settings:advanced.rateLimit.label")}</span>
-						<div className="flex items-center gap-2">
-							<input
-								type="range"
-								min="0"
-								max="60"
-								step="1"
-								value={rateLimitSeconds}
-								onChange={(e) => setCachedStateField("rateLimitSeconds", parseInt(e.target.value))}
-								className="h-2 focus:outline-0 w-4/5 accent-vscode-button-background"
-							/>
-							<span style={{ ...sliderLabelStyle }}>{rateLimitSeconds}s</span>
-						</div>
-					</div>
-					<p className="text-vscode-descriptionForeground text-sm mt-0">
-						{t("settings:advanced.rateLimit.description")}
-					</p>
-				</div>
-
 				<div>
 					<div className="flex flex-col gap-2">
 						<span className="font-medium">Terminal shell integration timeout</span>
