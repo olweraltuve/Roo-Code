@@ -13,13 +13,17 @@ import { SectionHeader } from "./SectionHeader"
 import { Section } from "./Section"
 
 type AdvancedSettingsProps = HTMLAttributes<HTMLDivElement> & {
+	terminalShellIntegrationTimeout: number | undefined
 	diffEnabled?: boolean
 	fuzzyMatchThreshold?: number
-	setCachedStateField: SetCachedStateField<"diffEnabled" | "fuzzyMatchThreshold">
+	setCachedStateField: SetCachedStateField<
+		"rateLimitSeconds" | "diffEnabled" | "fuzzyMatchThreshold" | "terminalShellIntegrationTimeout"
+	>
 	experiments: Record<ExperimentId, boolean>
 	setExperimentEnabled: SetExperimentEnabled
 }
 export const AdvancedSettings = ({
+	terminalShellIntegrationTimeout,
 	diffEnabled,
 	fuzzyMatchThreshold,
 	setCachedStateField,
