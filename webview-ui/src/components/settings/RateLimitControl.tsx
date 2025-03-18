@@ -1,5 +1,5 @@
 import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, FormEvent } from "react"
 import { useAppTranslation } from "@/i18n/TranslationContext"
 import { useDebounce } from "react-use"
 
@@ -26,8 +26,10 @@ export const RateLimitControl = ({ value, onChange, maxValue = 60 }: RateLimitCo
 			<div>
 				<VSCodeCheckbox
 					checked={isCustomRateLimit}
-					onChange={(e: any) => {
-						const isChecked = e.target.checked
+					onChange={(e: Event | FormEvent<HTMLElement>) => {
+						const target = ("target" in e ? e.target : null) as HTMLInputElement | null
+						if (!target) return
+						const isChecked = target.checked
 						setIsCustomRateLimit(isChecked)
 						if (!isChecked) {
 							setInputValue(null) // Unset the rate limit, note that undefined is unserializable
