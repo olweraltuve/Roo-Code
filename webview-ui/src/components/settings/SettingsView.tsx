@@ -465,7 +465,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 
 				<div ref={advancedRef}>
 					<AdvancedSettings
-						terminalShellIntegrationTimeout={terminalShellIntegrationTimeout}
 						diffEnabled={diffEnabled}
 						fuzzyMatchThreshold={fuzzyMatchThreshold}
 						setCachedStateField={setCachedStateField}
