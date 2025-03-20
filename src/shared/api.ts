@@ -17,6 +17,7 @@ export type ApiProvider =
 	| "unbound"
 	| "requesty"
 	| "human-relay"
+	| "fake-ai"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -77,6 +78,7 @@ export interface ApiHandlerOptions {
 	modelTemperature?: number | null
 	modelMaxTokens?: number
 	modelMaxThinkingTokens?: number
+	fakeAi?: unknown
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -136,6 +138,7 @@ export const API_CONFIG_KEYS: GlobalStateKey[] = [
 	"modelMaxTokens",
 	"modelMaxThinkingTokens",
 	"rateLimitSeconds", // Added for per-profile rate limiting
+	"fakeAi",
 ]
 
 // Models
