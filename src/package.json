@@ -339,7 +339,7 @@
 		}
 	},
 	"scripts": {
-		"lint": "eslint . --ext=ts --max-warnings=0",
+		"lint": "eslint . --max-warnings=0",
 		"check-types": "tsc --noEmit",
 		"pretest": "turbo run bundle --cwd ..",
 		"test": "jest -w=40% && vitest run",
