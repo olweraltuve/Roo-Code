@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "최대 tokens",
-		"maxThinkingTokens": "최대 사고 tokens"
+		"maxThinkingTokens": "최대 사고 tokens",
+		"manualThinkingBudget": "수동 사고 예산 설정 (그렇지 않으면 모델이 자동으로 결정)"
 	},
 	"validation": {
 		"apiKey": "유효한 API 키를 입력해야 합니다.",

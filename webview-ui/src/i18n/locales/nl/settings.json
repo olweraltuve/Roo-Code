@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "Max tokens",
-		"maxThinkingTokens": "Max denk-tokens"
+		"maxThinkingTokens": "Max denk-tokens",
+		"manualThinkingBudget": "Handmatig denkbudget instellen (anders beslist het model automatisch)"
 	},
 	"validation": {
 		"apiKey": "Je moet een geldige API-sleutel opgeven.",

@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "最大 token 數",
-		"maxThinkingTokens": "最大思考 token 數"
+		"maxThinkingTokens": "最大思考 token 數",
+		"manualThinkingBudget": "設定手動思考預算（否則由模型自動決定）"
 	},
 	"validation": {
 		"apiKey": "請提供有效的 API 金鑰。",

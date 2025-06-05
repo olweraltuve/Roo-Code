@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "अधिकतम tokens",
-		"maxThinkingTokens": "अधिकतम thinking tokens"
+		"maxThinkingTokens": "अधिकतम thinking tokens",
+		"manualThinkingBudget": "मैन्युअल सोच बजट सेट करें (अन्यथा मॉडल अपने आप निर्णय लेता है)"
 	},
 	"validation": {
 		"apiKey": "आपको एक मान्य API कुंजी प्रदान करनी होगी।",

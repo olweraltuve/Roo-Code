@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "Maksymalna liczba tokenów",
-		"maxThinkingTokens": "Maksymalna liczba tokenów myślenia"
+		"maxThinkingTokens": "Maksymalna liczba tokenów myślenia",
+		"manualThinkingBudget": "Ustaw manualny budżet myślenia (w przeciwnym razie model decyduje automatycznie)"
 	},
 	"validation": {
 		"apiKey": "Musisz podać prawidłowy klucz API.",

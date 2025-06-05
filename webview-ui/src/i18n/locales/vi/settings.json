@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "Tokens tối đa",
-		"maxThinkingTokens": "Tokens suy nghĩ tối đa"
+		"maxThinkingTokens": "Tokens suy nghĩ tối đa",
+		"manualThinkingBudget": "Đặt ngân sách suy nghĩ thủ công (nếu không, mô hình sẽ quyết định tự động)"
 	},
 	"validation": {
 		"apiKey": "Bạn phải cung cấp khóa API hợp lệ.",

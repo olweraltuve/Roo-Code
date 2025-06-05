@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "Maksimum token",
-		"maxThinkingTokens": "Maksimum düşünme tokeni"
+		"maxThinkingTokens": "Maksimum düşünme tokeni",
+		"manualThinkingBudget": "Manuel düşünme bütçesi ayarla (aksi takdirde model otomatik karar verir)"
 	},
 	"validation": {
 		"apiKey": "Geçerli bir API anahtarı sağlamalısınız.",
