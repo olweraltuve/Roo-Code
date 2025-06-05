@@ -21,7 +21,9 @@ export const ThinkingBudget = ({ apiConfiguration, setApiConfigurationField, mod
 	const isReasoningBudgetRequired = !!modelInfo && modelInfo.requiredReasoningBudget
 	const isReasoningEffortSupported = !!modelInfo && modelInfo.supportsReasoningEffort
 
-	const enableReasoningEffort = apiConfiguration.enableReasoningEffort
+	// For Gemini Flash thinking models, default to enabling reasoning if not explicitly set
+	const isGeminiFlashThinking = modelInfo && modelInfo.supportsReasoningBudget && !modelInfo.requiredReasoningBudget
+	const enableReasoningEffort = apiConfiguration.enableReasoningEffort ?? (isGeminiFlashThinking ? true : false)
 	const customMaxOutputTokens = apiConfiguration.modelMaxTokens || DEFAULT_HYBRID_REASONING_MODEL_MAX_TOKENS
 	const customMaxThinkingTokens =
 		apiConfiguration.modelMaxThinkingTokens || DEFAULT_HYBRID_REASONING_MODEL_THINKING_TOKENS
@@ -31,6 +33,13 @@ export const ThinkingBudget = ({ apiConfiguration, setApiConfigurationField, mod
 	const modelMaxThinkingTokens = modelInfo?.maxThinkingTokens
 		? Math.min(modelInfo.maxThinkingTokens, Math.floor(0.8 * customMaxOutputTokens))
 		: Math.floor(0.8 * customMaxOutputTokens)
+
+	// Initialize enableReasoningEffort to true for Gemini Flash thinking models if not set
+	useEffect(() => {
+		if (isGeminiFlashThinking && apiConfiguration.enableReasoningEffort === undefined) {
+			setApiConfigurationField("enableReasoningEffort", true)
+		}
+	}, [isGeminiFlashThinking, apiConfiguration.enableReasoningEffort, setApiConfigurationField])
 
 	// If the custom max thinking tokens are going to exceed it's limit due
 	// to the custom max output tokens being reduced then we need to shrink it
@@ -73,19 +82,54 @@ export const ThinkingBudget = ({ apiConfiguration, setApiConfigurationField, mod
 							<div className="w-12 text-sm text-center">{customMaxOutputTokens}</div>
 						</div>
 					</div>
-					<div className="flex flex-col gap-1">
-						<div className="font-medium">{t("settings:thinkingBudget.maxThinkingTokens")}</div>
-						<div className="flex items-center gap-1" data-testid="reasoning-budget">
-							<Slider
-								min={1024}
-								max={modelMaxThinkingTokens}
-								step={1024}
-								value={[customMaxThinkingTokens]}
-								onValueChange={([value]) => setApiConfigurationField("modelMaxThinkingTokens", value)}
-							/>
-							<div className="w-12 text-sm text-center">{customMaxThinkingTokens}</div>
+					{isGeminiFlashThinking ? (
+						<div className="flex flex-col gap-1">
+							<Checkbox
+								checked={!!apiConfiguration.modelMaxThinkingTokens}
+								onChange={(checked: boolean) => {
+									if (checked) {
+										setApiConfigurationField(
+											"modelMaxThinkingTokens",
+											DEFAULT_HYBRID_REASONING_MODEL_THINKING_TOKENS,
+										)
+									} else {
+										setApiConfigurationField("modelMaxThinkingTokens", undefined)
+									}
+								}}>
+								{t("settings:thinkingBudget.manualThinkingBudget")}
+							</Checkbox>
+							{!!apiConfiguration.modelMaxThinkingTokens && (
+								<div className="flex items-center gap-1" data-testid="reasoning-budget">
+									<Slider
+										min={1024}
+										max={modelMaxThinkingTokens}
+										step={1024}
+										value={[customMaxThinkingTokens]}
+										onValueChange={([value]) =>
+											setApiConfigurationField("modelMaxThinkingTokens", value)
+										}
+									/>
+									<div className="w-12 text-sm text-center">{customMaxThinkingTokens}</div>
+								</div>
+							)}
 						</div>
-					</div>
+					) : (
+						<div className="flex flex-col gap-1">
+							<div className="font-medium">{t("settings:thinkingBudget.maxThinkingTokens")}</div>
+							<div className="flex items-center gap-1" data-testid="reasoning-budget">
+								<Slider
+									min={1024}
+									max={modelMaxThinkingTokens}
+									step={1024}
+									value={[customMaxThinkingTokens]}
+									onValueChange={([value]) =>
+										setApiConfigurationField("modelMaxThinkingTokens", value)
+									}
+								/>
+								<div className="w-12 text-sm text-center">{customMaxThinkingTokens}</div>
+							</div>
+						</div>
+					)}
 				</>
 			)}
 		</>

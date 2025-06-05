@@ -15,7 +15,7 @@ export const geminiModels = {
 		outputPrice: 3.5,
 		maxThinkingTokens: 24_576,
 		supportsReasoningBudget: true,
-		requiredReasoningBudget: true,
+		requiredReasoningBudget: false,
 	},
 	"gemini-2.5-flash-preview-04-17": {
 		maxTokens: 65_535,
@@ -36,7 +36,7 @@ export const geminiModels = {
 		cacheWritesPrice: 1.0,
 		maxThinkingTokens: 24_576,
 		supportsReasoningBudget: true,
-		requiredReasoningBudget: true,
+		requiredReasoningBudget: false,
 	},
 	"gemini-2.5-flash-preview-05-20": {
 		maxTokens: 65_535,

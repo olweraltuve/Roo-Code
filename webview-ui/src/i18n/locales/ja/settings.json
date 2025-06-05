@@ -547,7 +547,8 @@
 	},
 	"thinkingBudget": {
 		"maxTokens": "最大 tokens",
-		"maxThinkingTokens": "最大思考 tokens"
+		"maxThinkingTokens": "最大思考 tokens",
+		"manualThinkingBudget": "手動思考予算を設定（そうでなければモデルが自動的に決定）"
 	},
 	"validation": {
 		"apiKey": "有効なAPIキーを入力してください。",

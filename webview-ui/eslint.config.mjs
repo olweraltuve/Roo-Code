@@ -5,6 +5,16 @@ export default [
 	...reactConfig,
 	{
 		rules: {
+			// Disable base ESLint rule to avoid conflicts with TypeScript ESLint version
+			"no-unused-expressions": "off",
+			"@typescript-eslint/no-unused-expressions": [
+				"error",
+				{
+					allowShortCircuit: true,
+					allowTernary: true,
+					allowTaggedTemplates: true,
+				},
+			],
 			"@typescript-eslint/no-unused-vars": [
 				"error",
 				{

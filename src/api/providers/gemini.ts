@@ -81,7 +81,28 @@ export class GeminiHandler extends BaseProvider implements SingleCompletionHandl
 		let lastUsageMetadata: GenerateContentResponseUsageMetadata | undefined
 
 		for await (const chunk of result) {
-			if (chunk.text) {
+			// Process candidates and their parts to separate thoughts from content
+			if (chunk.candidates && chunk.candidates.length > 0) {
+				const candidate = chunk.candidates[0]
+				if (candidate.content && candidate.content.parts) {
+					for (const part of candidate.content.parts) {
+						if (part.thought) {
+							// This is a thinking/reasoning part
+							if (part.text) {
+								yield { type: "reasoning", text: part.text }
+							}
+						} else {
+							// This is regular content
+							if (part.text) {
+								yield { type: "text", text: part.text }
+							}
+						}
+					}
+				}
+			}
+
+			// Fallback to the original text property if no candidates structure
+			else if (chunk.text) {
 				yield { type: "text", text: chunk.text }
 			}
 
@@ -117,12 +138,14 @@ export class GeminiHandler extends BaseProvider implements SingleCompletionHandl
 			if (geminiModels[id as GeminiModelId]) {
 				info = geminiModels[id as GeminiModelId]
 
+				const thinkingConfig = this.options.modelMaxThinkingTokens
+					? { includeThoughts: true, thinkingBudget: this.options.modelMaxThinkingTokens }
+					: { includeThoughts: true }
+
 				return {
 					id,
 					info,
-					thinkingConfig: this.options.modelMaxThinkingTokens
-						? { thinkingBudget: this.options.modelMaxThinkingTokens }
-						: undefined,
+					thinkingConfig,
 					maxOutputTokens: this.options.modelMaxTokens ?? info.maxTokens ?? undefined,
 				}
 			}
