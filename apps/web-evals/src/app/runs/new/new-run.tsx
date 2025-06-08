@@ -68,9 +68,8 @@ export function NewRun() {
 	const models = useOpenRouterModels()
 	const exercises = useQuery({ queryKey: ["getExercises"], queryFn: () => getExercises() })
 
-	const form = useForm({
-		// @ts-expect-error deep type instantiation
-		resolver: zodResolver(formSchema) as any,
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema),
 		defaultValues: {
 			model: MODEL_DEFAULT,
 			description: "",
@@ -79,7 +78,7 @@ export function NewRun() {
 			settings: undefined,
 			concurrency: CONCURRENCY_DEFAULT,
 		},
-	}) as any as UseFormReturn<FormValues>
+	})
 
 	const {
 		setValue,
@@ -179,12 +178,12 @@ export function NewRun() {
 		<>
 			<FormProvider {...form}>
 				<form
-					onSubmit={form.handleSubmit(onSubmit as any)}
+					onSubmit={form.handleSubmit(onSubmit)}
 					className="flex flex-col justify-center divide-y divide-primary *:py-5">
 					<div className="flex flex-row justify-between gap-4">
 						{mode === "openrouter" && (
 							<FormField
-								control={form.control as any}
+								control={form.control}
 								name="model"
 								render={() => (
 									<FormItem className="flex-1">
@@ -292,7 +291,7 @@ export function NewRun() {
 					</div>
 
 					<FormField
-						control={form.control as any}
+						control={form.control}
 						name="suite"
 						render={() => (
 							<FormItem>
@@ -320,7 +319,7 @@ export function NewRun() {
 					/>
 
 					<FormField
-						control={form.control as any}
+						control={form.control}
 						name="concurrency"
 						render={({ field }) => (
 							<FormItem>
@@ -343,7 +342,7 @@ export function NewRun() {
 					/>
 
 					<FormField
-						control={form.control as any}
+						control={form.control}
 						name="description"
 						render={({ field }) => (
 							<FormItem>
