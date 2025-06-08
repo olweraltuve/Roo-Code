@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { z } from "zod"
 import { useQuery } from "@tanstack/react-query"
-import { useForm, FormProvider } from "react-hook-form"
+import { useForm, FormProvider, type UseFormReturn } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import fuzzysort from "fuzzysort"
 import { toast } from "sonner"
@@ -68,8 +68,9 @@ export function NewRun() {
 	const models = useOpenRouterModels()
 	const exercises = useQuery({ queryKey: ["getExercises"], queryFn: () => getExercises() })
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm({
+		// @ts-expect-error deep type instantiation
+		resolver: zodResolver(formSchema) as any,
 		defaultValues: {
 			model: MODEL_DEFAULT,
 			description: "",
@@ -78,7 +79,7 @@ export function NewRun() {
 			settings: undefined,
 			concurrency: CONCURRENCY_DEFAULT,
 		},
-	})
+	}) as any as UseFormReturn<FormValues>
 
 	const {
 		setValue,
@@ -178,12 +179,12 @@ export function NewRun() {
 		<>
 			<FormProvider {...form}>
 				<form
-					onSubmit={form.handleSubmit(onSubmit)}
+					onSubmit={form.handleSubmit(onSubmit as any)}
 					className="flex flex-col justify-center divide-y divide-primary *:py-5">
 					<div className="flex flex-row justify-between gap-4">
 						{mode === "openrouter" && (
 							<FormField
-								control={form.control}
+								control={form.control as any}
 								name="model"
 								render={() => (
 									<FormItem className="flex-1">
@@ -291,7 +292,7 @@ export function NewRun() {
 					</div>
 
 					<FormField
-						control={form.control}
+						control={form.control as any}
 						name="suite"
 						render={() => (
 							<FormItem>
@@ -319,7 +320,7 @@ export function NewRun() {
 					/>
 
 					<FormField
-						control={form.control}
+						control={form.control as any}
 						name="concurrency"
 						render={({ field }) => (
 							<FormItem>
@@ -342,7 +343,7 @@ export function NewRun() {
 					/>
 
 					<FormField
-						control={form.control}
+						control={form.control as any}
 						name="description"
 						render={({ field }) => (
 							<FormItem>
