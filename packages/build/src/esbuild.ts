@@ -22,7 +22,7 @@ function copyDir(srcDir: string, dstDir: string, count: number): number {
 	return count
 }
 
-function rmDir(dirPath: string, maxRetries: number = 3): void {
+async function rmDir(dirPath: string, maxRetries: number = 3): Promise<void> {
 	for (let attempt = 1; attempt <= maxRetries; attempt++) {
 		try {
 			fs.rmSync(dirPath, { recursive: true, force: true })
@@ -41,12 +41,8 @@ function rmDir(dirPath: string, maxRetries: number = 3): void {
 			const delay = Math.min(100 * Math.pow(2, attempt - 1), 1000) // Cap at 1s.
 			console.warn(`[rmDir] Attempt ${attempt} failed for ${dirPath}, retrying in ${delay}ms...`)
 
-			// Synchronous sleep for simplicity in build scripts.
-			const start = Date.now()
-
-			while (Date.now() - start < delay) {
-				/* Busy wait */
-			}
+			// Use an asynchronous wait.
+			await new Promise((resolve) => setTimeout(resolve, delay))
 		}
 	}
 }
@@ -55,14 +51,18 @@ type CopyPathOptions = {
 	optional?: boolean
 }
 
-export function copyPaths(copyPaths: [string, string, CopyPathOptions?][], srcDir: string, dstDir: string) {
-	copyPaths.forEach(([srcRelPath, dstRelPath, options = {}]) => {
+export async function copyPaths(
+	copyPaths: [string, string, CopyPathOptions?][],
+	srcDir: string,
+	dstDir: string,
+): Promise<void> {
+	for (const [srcRelPath, dstRelPath, options = {}] of copyPaths) {
 		try {
 			const stats = fs.lstatSync(path.join(srcDir, srcRelPath))
 
 			if (stats.isDirectory()) {
 				if (fs.existsSync(path.join(dstDir, dstRelPath))) {
-					rmDir(path.join(dstDir, dstRelPath))
+					await rmDir(path.join(dstDir, dstRelPath))
 				}
 
 				fs.mkdirSync(path.join(dstDir, dstRelPath), { recursive: true })
@@ -80,7 +80,7 @@ export function copyPaths(copyPaths: [string, string, CopyPathOptions?][], srcDi
 				throw error
 			}
 		}
-	})
+	}
 }
 
 export function copyWasms(srcDir: string, distDir: string): void {
