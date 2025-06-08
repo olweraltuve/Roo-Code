@@ -899,9 +899,9 @@ describe("Cline", () => {
 				} as AsyncGenerator<ApiStreamChunk>
 
 				jest.spyOn(child.api, "createMessage").mockReturnValue(mockStream)
-
+				const rateLimitSeconds = 5
 				mockProvider.getState = jest.fn().mockResolvedValue({
-					apiConfiguration: { ...mockApiConfig, rateLimitSeconds: 5 },
+					apiConfiguration: { ...mockApiConfig, rateLimitSeconds },
 				})
 
 				const mockDelay = jest.fn().mockResolvedValue(undefined)
@@ -910,7 +910,7 @@ describe("Cline", () => {
 				const iterator = child.attemptApiRequest(0)
 				await iterator.next()
 
-				expect(mockDelay).toHaveBeenCalledTimes(5)
+				expect(mockDelay).toHaveBeenCalledTimes(rateLimitSeconds)
 
 				await child.abortTask(true)
 			})
@@ -938,9 +938,9 @@ describe("Cline", () => {
 
 				child.setLastApiRequestTime(Date.now())
 				parent.setLastApiRequestTime(Date.now() - 6000)
-
+				const rateLimitSeconds = 5
 				mockProvider.getState = jest.fn().mockResolvedValue({
-					apiConfiguration: { ...mockApiConfig, rateLimitSeconds: 5 },
+					apiConfiguration: { ...mockApiConfig, rateLimitSeconds },
 				})
 
 				const mockStream = {
@@ -970,7 +970,7 @@ describe("Cline", () => {
 				const iterator = parent.attemptApiRequest(0)
 				await iterator.next()
 
-				expect(mockDelay).toHaveBeenCalledTimes(5)
+				expect(mockDelay).toHaveBeenCalledTimes(rateLimitSeconds)
 
 				await parent.abortTask(true)
 			})
