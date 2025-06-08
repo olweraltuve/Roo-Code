@@ -27,11 +27,14 @@ async function rmDir(dirPath: string, maxRetries: number = 3): Promise<void> {
 		try {
 			fs.rmSync(dirPath, { recursive: true, force: true })
 			return
-		} catch (error) {
+		} catch (error: unknown) {
 			const isLastAttempt = attempt === maxRetries
 
 			const isEnotemptyError =
-				error instanceof Error && "code" in error && (error.code === "ENOTEMPTY" || error.code === "EBUSY")
+				typeof error === "object" &&
+				error !== null &&
+				"code" in error &&
+				(error.code === "ENOTEMPTY" || error.code === "EBUSY")
 
 			if (isLastAttempt || !isEnotemptyError) {
 				throw error // Re-throw if it's the last attempt or not a locking error.
@@ -73,7 +76,7 @@ export async function copyPaths(
 				fs.copyFileSync(path.join(srcDir, srcRelPath), path.join(dstDir, dstRelPath))
 				console.log(`[copyPaths] Copied ${srcRelPath} to ${dstRelPath}`)
 			}
-		} catch (error) {
+		} catch (error: unknown) {
 			if (options.optional) {
 				console.warn(`[copyPaths] Optional file not found: ${srcRelPath}`)
 			} else {
@@ -171,7 +174,7 @@ export function setupLocaleWatcher(srcDir: string, distDir: string) {
 			}
 		})
 		console.log("Watcher for locale files is set up")
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error(
 			`Error setting up watcher for ${localesDir}:`,
 			error instanceof Error ? error.message : "Unknown error",
