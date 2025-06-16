@@ -140,6 +140,7 @@ export class Task extends EventEmitter<ClineEvents> {
 	// API
 	readonly apiConfiguration: ProviderSettings
 	api: ApiHandler
+	private static lastGlobalApiRequestTime?: number
 	private lastApiRequestTime?: number
 	private consecutiveAutoApprovedRequestsCount: number = 0
 
@@ -1657,10 +1658,11 @@ export class Task extends EventEmitter<ClineEvents> {
 
 		let rateLimitDelay = 0
 
-		// Only apply rate limiting if this isn't the first request
-		if (this.lastApiRequestTime) {
+		// Use the shared timestamp so that subtasks respect the same rate-limit
+		// window as their parent tasks.
+		if (Task.lastGlobalApiRequestTime) {
 			const now = Date.now()
-			const timeSinceLastRequest = now - this.lastApiRequestTime
+			const timeSinceLastRequest = now - Task.lastGlobalApiRequestTime
 			const rateLimit = apiConfiguration?.rateLimitSeconds || 0
 			rateLimitDelay = Math.ceil(Math.max(0, rateLimit * 1000 - timeSinceLastRequest) / 1000)
 		}
@@ -1675,8 +1677,11 @@ export class Task extends EventEmitter<ClineEvents> {
 			}
 		}
 
-		// Update last request time before making the request
+		// Update last request time before making the request (both instance-level
+		// and global) so that subsequent requests — even from new subtasks — will
+		// honour the provider's rate-limit.
 		this.lastApiRequestTime = Date.now()
+		Task.lastGlobalApiRequestTime = this.lastApiRequestTime
 
 		const systemPrompt = await this.getSystemPrompt()
 		const { contextTokens } = this.getTokenUsage()
