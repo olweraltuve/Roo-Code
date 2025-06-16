@@ -144,6 +144,14 @@ export class Task extends EventEmitter<ClineEvents> {
 	private lastApiRequestTime?: number
 	private consecutiveAutoApprovedRequestsCount: number = 0
 
+	/**
+	 * Reset the global API request timestamp. This should only be used for testing.
+	 * @internal
+	 */
+	static resetGlobalApiRequestTime(): void {
+		Task.lastGlobalApiRequestTime = undefined
+	}
+
 	toolRepetitionDetector: ToolRepetitionDetector
 	rooIgnoreController?: RooIgnoreController
 	rooProtectedController?: RooProtectedController
