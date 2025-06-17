@@ -141,7 +141,6 @@ export class Task extends EventEmitter<ClineEvents> {
 	readonly apiConfiguration: ProviderSettings
 	api: ApiHandler
 	private static lastGlobalApiRequestTime?: number
-	private lastApiRequestTime?: number
 	private consecutiveAutoApprovedRequestsCount: number = 0
 
 	/**
@@ -1685,11 +1684,9 @@ export class Task extends EventEmitter<ClineEvents> {
 			}
 		}
 
-		// Update last request time before making the request (both instance-level
-		// and global) so that subsequent requests — even from new subtasks — will
-		// honour the provider's rate-limit.
-		this.lastApiRequestTime = Date.now()
-		Task.lastGlobalApiRequestTime = this.lastApiRequestTime
+		// Update last request time before making the request so that subsequent
+		// requests — even from new subtasks — will honour the provider's rate-limit.
+		Task.lastGlobalApiRequestTime = Date.now()
 
 		const systemPrompt = await this.getSystemPrompt()
 		const { contextTokens } = this.getTokenUsage()
