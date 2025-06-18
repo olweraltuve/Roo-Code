@@ -30,34 +30,43 @@ vi.mock("execa", () => ({
 	execa: vi.fn(),
 }))
 
-vi.mock("fs/promises", () => ({
-	mkdir: vi.fn().mockResolvedValue(undefined),
-	writeFile: vi.fn().mockResolvedValue(undefined),
-	readFile: vi.fn().mockImplementation((filePath) => {
-		if (filePath.includes("ui_messages.json")) {
-			return Promise.resolve(JSON.stringify(mockMessages))
-		}
-		if (filePath.includes("api_conversation_history.json")) {
-			return Promise.resolve(
-				JSON.stringify([
-					{
-						role: "user",
-						content: [{ type: "text", text: "historical task" }],
-						ts: Date.now(),
-					},
-					{
-						role: "assistant",
-						content: [{ type: "text", text: "I'll help you with that task." }],
-						ts: Date.now(),
-					},
-				]),
-			)
-		}
-		return Promise.resolve("[]")
-	}),
-	unlink: vi.fn().mockResolvedValue(undefined),
-	rmdir: vi.fn().mockResolvedValue(undefined),
-}))
+vi.mock("fs/promises", async (importOriginal) => {
+	const actual = (await importOriginal()) as Record<string, any>
+	const mockFunctions = {
+		mkdir: vi.fn().mockResolvedValue(undefined),
+		writeFile: vi.fn().mockResolvedValue(undefined),
+		readFile: vi.fn().mockImplementation((filePath) => {
+			if (filePath.includes("ui_messages.json")) {
+				return Promise.resolve(JSON.stringify(mockMessages))
+			}
+			if (filePath.includes("api_conversation_history.json")) {
+				return Promise.resolve(
+					JSON.stringify([
+						{
+							role: "user",
+							content: [{ type: "text", text: "historical task" }],
+							ts: Date.now(),
+						},
+						{
+							role: "assistant",
+							content: [{ type: "text", text: "I'll help you with that task." }],
+							ts: Date.now(),
+						},
+					]),
+				)
+			}
+			return Promise.resolve("[]")
+		}),
+		unlink: vi.fn().mockResolvedValue(undefined),
+		rmdir: vi.fn().mockResolvedValue(undefined),
+	}
+
+	return {
+		...actual,
+		...mockFunctions,
+		default: mockFunctions,
+	}
+})
 
 vi.mock("p-wait-for", () => ({
 	default: vi.fn().mockImplementation(async () => Promise.resolve()),
